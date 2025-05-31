@@ -4,18 +4,75 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { BarChart, Zap, TrendingDown, Users, Monitor, Database, Settings, Info } from "lucide-react";
+import { BarChart, Zap, TrendingDown, Users, Monitor, Database, Settings, Info, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const [chatMessage, setChatMessage] = useState("");
+  const [chatHistory, setChatHistory] = useState<Array<{type: 'user' | 'ai', message: string}>>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
-  const handleSendMessage = () => {
-    if (chatMessage.trim()) {
-      // API integration will be added later
-      console.log("Message to send:", chatMessage);
-      setChatMessage("");
+  const handleSendMessage = async () => {
+    if (!chatMessage.trim()) return;
+
+    const userMessage = chatMessage.trim();
+    setChatMessage("");
+    setIsLoading(true);
+
+    // Add user message to chat history
+    setChatHistory(prev => [...prev, { type: 'user', message: userMessage }]);
+
+    try {
+      const response = await fetch('https://agent-prod.studio.lyzr.ai/v3/inference/chat/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': 'sk-default-vaeODYHab23xkcK86nfzePj729EUooSp'
+        },
+        body: JSON.stringify({
+          user_id: "demo-user@costadvisor.com",
+          agent_id: "683a8243c446a3a00dfef1ea",
+          session_id: "683a8243c446a3a00dfef1ea-demo-session",
+          message: userMessage
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      // Add AI response to chat history
+      setChatHistory(prev => [...prev, { 
+        type: 'ai', 
+        message: data.response || data.message || "I received your message and I'm here to help optimize your AI costs!"
+      }]);
+
+    } catch (error) {
+      console.error('Error calling AI Cost Advisor API:', error);
+      toast({
+        title: "Connection Error",
+        description: "Unable to connect to the AI Cost Advisor. Please try again.",
+        variant: "destructive"
+      });
+      
+      // Add error message to chat
+      setChatHistory(prev => [...prev, { 
+        type: 'ai', 
+        message: "I'm sorry, I'm having trouble connecting right now. Please try again in a moment."
+      }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
     }
   };
 
@@ -214,11 +271,39 @@ const Index = () => {
             </CardHeader>
             <CardContent className="p-6">
               <div className="space-y-4">
-                <div className="bg-gray-50 p-4 rounded-lg min-h-[200px] flex items-center justify-center">
-                  <p className="text-gray-500 text-center">
-                    <Zap className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                    Chat interface will be connected to your API here
-                  </p>
+                <div className="bg-gray-50 p-4 rounded-lg min-h-[300px] max-h-[400px] overflow-y-auto">
+                  {chatHistory.length === 0 ? (
+                    <div className="flex items-center justify-center h-full">
+                      <p className="text-gray-500 text-center">
+                        <Zap className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+                        Start a conversation with the AI Cost Advisor
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {chatHistory.map((chat, index) => (
+                        <div key={index} className={`flex ${chat.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                          <div className={`max-w-[80%] p-3 rounded-lg ${
+                            chat.type === 'user' 
+                              ? 'bg-blue-600 text-white' 
+                              : 'bg-white border border-gray-200 text-gray-800'
+                          }`}>
+                            <p className="text-sm whitespace-pre-wrap">{chat.message}</p>
+                          </div>
+                        </div>
+                      ))}
+                      {isLoading && (
+                        <div className="flex justify-start">
+                          <div className="bg-white border border-gray-200 text-gray-800 p-3 rounded-lg">
+                            <div className="flex items-center space-x-2">
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <span className="text-sm">AI Cost Advisor is thinking...</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
                 
                 <div className="flex space-x-2">
@@ -226,20 +311,22 @@ const Index = () => {
                     placeholder="Ask about your AI costs, usage patterns, or optimization strategies..."
                     value={chatMessage}
                     onChange={(e) => setChatMessage(e.target.value)}
+                    onKeyPress={handleKeyPress}
                     className="flex-1 resize-none border-blue-200 focus:border-blue-400"
                     rows={3}
+                    disabled={isLoading}
                   />
                   <Button 
                     onClick={handleSendMessage}
                     className="bg-blue-600 hover:bg-blue-700 px-6"
-                    disabled={!chatMessage.trim()}
+                    disabled={!chatMessage.trim() || isLoading}
                   >
-                    Send
+                    {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Send"}
                   </Button>
                 </div>
                 
                 <p className="text-sm text-gray-500 text-center">
-                  Example: "I'm using GPT-4 for content generation. How can I reduce costs?"
+                  Example: "I'm using GPT-4 for content generation with 10,000 tokens daily. How can I reduce costs?"
                 </p>
               </div>
             </CardContent>
