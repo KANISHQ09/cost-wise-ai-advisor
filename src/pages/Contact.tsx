@@ -23,14 +23,20 @@ const Contact = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate form submission
+    // For now, simulate sending email (replace with actual email service later)
     setTimeout(() => {
       setIsLoading(false);
       toast({
-        title: "Message Sent",
+        title: "Message Sent Successfully!",
         description: "Thank you for contacting us! We'll get back to you within 24 hours.",
       });
       setFormData({ name: "", email: "", company: "", message: "" });
+      
+      // Log form data for now (replace with actual email service)
+      console.log("Contact form submitted:", {
+        ...formData,
+        timestamp: new Date().toISOString()
+      });
     }, 1000);
   };
 
