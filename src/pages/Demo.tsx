@@ -1,13 +1,62 @@
 
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Zap, BarChart, TrendingDown, ArrowLeft, Play } from "lucide-react";
+import { gsap } from "gsap";
+import DemoDashboard from "@/components/demo/DemoDashboard";
+import CostCalculator from "@/components/demo/CostCalculator";
 
 const Demo = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement[]>([]);
+
+  useEffect(() => {
+    // GSAP animations on page load
+    const tl = gsap.timeline();
+    
+    tl.from(".demo-header", {
+      duration: 1,
+      y: 50,
+      opacity: 0,
+      ease: "power3.out"
+    })
+    .from(".demo-badge", {
+      duration: 0.8,
+      scale: 0,
+      ease: "back.out(1.7)"
+    }, "-=0.5")
+    .from(cardsRef.current, {
+      duration: 1,
+      y: 100,
+      opacity: 0,
+      stagger: 0.2,
+      ease: "power3.out"
+    }, "-=0.3");
+
+    // Hover animations for cards
+    cardsRef.current.forEach(card => {
+      if (card) {
+        card.addEventListener('mouseenter', () => {
+          gsap.to(card, { duration: 0.3, scale: 1.05, ease: "power2.out" });
+        });
+        card.addEventListener('mouseleave', () => {
+          gsap.to(card, { duration: 0.3, scale: 1, ease: "power2.out" });
+        });
+      }
+    });
+  }, []);
+
+  const addToRefs = (el: HTMLDivElement) => {
+    if (el && !cardsRef.current.includes(el)) {
+      cardsRef.current.push(el);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white" ref={containerRef}>
       <header className="bg-white shadow-sm border-b border-blue-100">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-2">
@@ -26,8 +75,8 @@ const Demo = () => {
       </header>
 
       <div className="container mx-auto px-4 py-12 max-w-4xl">
-        <div className="text-center mb-12">
-          <Badge className="mb-4 bg-blue-100 text-blue-700">
+        <div className="text-center mb-12 demo-header">
+          <Badge className="mb-4 bg-blue-100 text-blue-700 demo-badge">
             Interactive Demo
           </Badge>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
@@ -39,7 +88,7 @@ const Demo = () => {
         </div>
 
         <div className="grid gap-8 mb-12">
-          <Card className="border-blue-200">
+          <Card className="border-blue-200" ref={addToRefs}>
             <CardHeader>
               <div className="flex items-center space-x-3">
                 <div className="bg-blue-100 p-2 rounded-lg">
@@ -54,19 +103,11 @@ const Demo = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="bg-gray-100 rounded-lg p-8 text-center">
-                <BarChart className="h-16 w-16 text-blue-600 mx-auto mb-4" />
-                <p className="text-gray-600 mb-4">
-                  Interactive dashboard demo would be embedded here
-                </p>
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                  Launch Demo Dashboard
-                </Button>
-              </div>
+              <DemoDashboard />
             </CardContent>
           </Card>
 
-          <Card className="border-blue-200">
+          <Card className="border-blue-200" ref={addToRefs}>
             <CardHeader>
               <div className="flex items-center space-x-3">
                 <div className="bg-green-100 p-2 rounded-lg">
@@ -81,15 +122,7 @@ const Demo = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="bg-gray-100 rounded-lg p-8 text-center">
-                <TrendingDown className="h-16 w-16 text-green-600 mx-auto mb-4" />
-                <p className="text-gray-600 mb-4">
-                  Cost optimization calculator demo would be embedded here
-                </p>
-                <Button variant="outline" className="border-green-200 text-green-600 hover:bg-green-50">
-                  Try Cost Calculator
-                </Button>
-              </div>
+              <CostCalculator />
             </CardContent>
           </Card>
         </div>
