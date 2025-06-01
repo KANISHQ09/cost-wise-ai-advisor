@@ -1,5 +1,5 @@
-
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -93,7 +93,9 @@ const Index = () => {
             <a href="#try-advisor" className="text-gray-600 hover:text-blue-600 transition-colors">Try Advisor</a>
             <a href="#faq" className="text-gray-600 hover:text-blue-600 transition-colors">FAQ</a>
           </nav>
-          <Button className="bg-blue-600 hover:bg-blue-700">Get Started</Button>
+          <Button asChild className="bg-blue-600 hover:bg-blue-700">
+            <Link to="/signup">Get Started</Link>
+          </Button>
         </div>
       </header>
 
@@ -112,11 +114,11 @@ const Index = () => {
             with our intelligent cost advisor. Get real-time insights and optimization recommendations.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700 px-8 py-3">
-              Start Free Analysis
+            <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 px-8 py-3">
+              <Link to="/signup">Start Free Analysis</Link>
             </Button>
-            <Button size="lg" variant="outline" className="border-blue-200 text-blue-600 hover:bg-blue-50 px-8 py-3">
-              View Demo
+            <Button asChild size="lg" variant="outline" className="border-blue-200 text-blue-600 hover:bg-blue-50 px-8 py-3">
+              <Link to="/demo">View Demo</Link>
             </Button>
           </div>
         </div>
@@ -426,9 +428,9 @@ const Index = () => {
             <div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-8 text-gray-400">
               <p>&copy; 2024 AI Cost Advisor. All rights reserved.</p>
               <div className="flex space-x-6">
-                <a href="#" className="hover:text-blue-400 transition-colors">Privacy</a>
-                <a href="#" className="hover:text-blue-400 transition-colors">Terms</a>
-                <a href="#" className="hover:text-blue-400 transition-colors">Contact</a>
+                <Link to="/privacy" className="hover:text-blue-400 transition-colors">Privacy</Link>
+                <Link to="/terms" className="hover:text-blue-400 transition-colors">Terms</Link>
+                <Link to="/contact" className="hover:text-blue-400 transition-colors">Contact</Link>
               </div>
             </div>
           </div>
