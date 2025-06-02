@@ -71,10 +71,8 @@ const Auth = () => {
     } else {
       toast({
         title: "Account Created",
-        description: "Please check your email to verify your account before signing in.",
+        description: "Welcome to AI Cost Advisor! Please check your email to verify your account.",
       });
-      // Clear form
-      setSignupData({ name: "", email: "", password: "", confirmPassword: "" });
     }
     setIsLoading(false);
   };
