@@ -54,13 +54,11 @@ const Demo = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="bg-gray-100 rounded-lg p-8 text-center">
-                <BarChart className="h-16 w-16 text-blue-600 mx-auto mb-4" />
-                <p className="text-gray-600 mb-4">
-                  Interactive dashboard demo would be embedded here
-                </p>
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                  Launch Demo Dashboard
+              <div className="text-center">
+                <Button asChild className="bg-blue-600 hover:bg-blue-700">
+                  <Link to="/demo-dashboard">
+                    Launch Demo Dashboard
+                  </Link>
                 </Button>
               </div>
             </CardContent>
@@ -81,13 +79,11 @@ const Demo = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="bg-gray-100 rounded-lg p-8 text-center">
-                <TrendingDown className="h-16 w-16 text-green-600 mx-auto mb-4" />
-                <p className="text-gray-600 mb-4">
-                  Cost optimization calculator demo would be embedded here
-                </p>
-                <Button variant="outline" className="border-green-200 text-green-600 hover:bg-green-50">
-                  Try Cost Calculator
+              <div className="text-center">
+                <Button asChild variant="outline" className="border-green-200 text-green-600 hover:bg-green-50">
+                  <Link to="/cost-calculator">
+                    Try Cost Calculator
+                  </Link>
                 </Button>
               </div>
             </CardContent>
@@ -103,7 +99,7 @@ const Demo = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700">
-              <Link to="/signup">Start Free Analysis</Link>
+              <Link to="/auth">Start Free Analysis</Link>
             </Button>
             <Button asChild size="lg" variant="outline">
               <Link to="/contact">Contact Sales</Link>

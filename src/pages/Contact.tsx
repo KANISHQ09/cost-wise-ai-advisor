@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Zap, ArrowLeft, Mail, Phone, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -23,15 +23,32 @@ const Contact = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate form submission
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const { error } = await supabase
+        .from('contact_submissions')
+        .insert([{
+          name: formData.name,
+          email: formData.email,
+          company: formData.company,
+          message: formData.message
+        }]);
+
+      if (error) throw error;
+
       toast({
         title: "Message Sent",
         description: "Thank you for contacting us! We'll get back to you within 24 hours.",
       });
       setFormData({ name: "", email: "", company: "", message: "" });
-    }, 1000);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -196,7 +213,7 @@ const Contact = () => {
                   Our team can help you design a tailored approach.
                 </p>
                 <Button asChild className="bg-blue-600 hover:bg-blue-700">
-                  <Link to="/signup">Schedule a Demo</Link>
+                  <Link to="/auth">Schedule a Demo</Link>
                 </Button>
               </CardContent>
             </Card>
