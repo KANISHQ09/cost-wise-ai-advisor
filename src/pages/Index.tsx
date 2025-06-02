@@ -1,18 +1,21 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { BarChart, Zap, TrendingDown, Users, Monitor, Database, Settings, Info, Loader2 } from "lucide-react";
+import { BarChart, Zap, TrendingDown, Users, Monitor, Database, Settings, Info, Loader2, User, LogOut, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
+  const { user, signOut, loading } = useAuth();
   const [chatMessage, setChatMessage] = useState("");
   const [chatHistory, setChatHistory] = useState<Array<{type: 'user' | 'ai', message: string}>>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSendMessage = async () => {
     if (!chatMessage.trim()) return;
@@ -32,9 +35,9 @@ const Index = () => {
           'x-api-key': 'sk-default-vaeODYHab23xkcK86nfzePj729EUooSp'
         },
         body: JSON.stringify({
-          user_id: "demo-user@costadvisor.com",
+          user_id: user?.email || "demo-user@costadvisor.com",
           agent_id: "683a8243c446a3a00dfef1ea",
-          session_id: "683a8243c446a3a00dfef1ea-demo-session",
+          session_id: `683a8243c446a3a00dfef1ea-${user?.id || 'demo'}-session`,
           message: userMessage
         })
       });
@@ -76,6 +79,243 @@ const Index = () => {
     }
   };
 
+  const handleSignOut = async () => {
+    await signOut();
+    setChatHistory([]);
+    setChatMessage("");
+    toast({
+      title: "Signed Out",
+      description: "You have been successfully signed out.",
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="bg-blue-600 p-3 rounded-lg mb-4 inline-block">
+            <Zap className="h-8 w-8 text-white animate-pulse" />
+          </div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Authenticated user view
+  if (user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
+        {/* Header for authenticated users */}
+        <header className="bg-white shadow-sm border-b border-blue-100">
+          <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div className="flex items-center space-x-2">
+              <div className="bg-blue-600 p-2 rounded-lg">
+                <Zap className="h-6 w-6 text-white" />
+              </div>
+              <h1 className="text-2xl font-bold text-gray-900">AI Cost Advisor</h1>
+            </div>
+            <div className="flex items-center space-x-4">
+              {!user.email_confirmed_at && (
+                <Badge variant="outline" className="text-orange-600 border-orange-600">
+                  <Mail className="h-3 w-3 mr-1" />
+                  Email Unverified
+                </Badge>
+              )}
+              <Button asChild variant="outline">
+                <Link to="/dashboard">
+                  <BarChart className="h-4 w-4 mr-2" />
+                  Dashboard
+                </Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link to="/profile">
+                  <User className="h-4 w-4 mr-2" />
+                  Profile
+                </Link>
+              </Button>
+              <Button onClick={handleSignOut} variant="outline">
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
+          </div>
+        </header>
+
+        {/* Welcome section */}
+        <section className="py-12 px-4">
+          <div className="container mx-auto text-center max-w-4xl">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Welcome back, {user.email}!
+            </h2>
+            <p className="text-xl text-gray-600 mb-8">
+              Your AI Cost Advisor is ready to help you optimize your AI spending.
+            </p>
+            {!user.email_confirmed_at && (
+              <div className="mb-8 p-4 bg-orange-50 border border-orange-200 rounded-lg max-w-2xl mx-auto">
+                <p className="text-orange-800">
+                  <strong>Email verification required:</strong> Please check your email and click the verification link to access all features.
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* AI Cost Advisor Chat */}
+        <section className="py-12 px-4 bg-white">
+          <div className="container mx-auto max-w-4xl">
+            <div className="text-center mb-8">
+              <h3 className="text-3xl font-bold text-gray-900 mb-4">AI Cost Advisor Chat</h3>
+              <p className="text-xl text-gray-600">
+                Get personalized cost optimization recommendations
+              </p>
+            </div>
+            
+            <Card className="border-blue-200 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-blue-50 to-white">
+                <CardTitle className="text-xl text-center">Your Personal AI Cost Advisor</CardTitle>
+                <CardDescription className="text-center">
+                  Ask about your AI usage patterns and get expert optimization advice
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  <div className="bg-gray-50 p-4 rounded-lg min-h-[400px] max-h-[500px] overflow-y-auto">
+                    {chatHistory.length === 0 ? (
+                      <div className="flex items-center justify-center h-full">
+                        <div className="text-center">
+                          <Zap className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+                          <p className="text-gray-500 text-lg mb-4">
+                            Hello! I'm your AI Cost Advisor
+                          </p>
+                          <p className="text-gray-400 text-sm">
+                            Start by describing your AI usage or asking about optimization strategies
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {chatHistory.map((chat, index) => (
+                          <div key={index} className={`flex ${chat.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                            <div className={`max-w-[80%] p-3 rounded-lg ${
+                              chat.type === 'user' 
+                                ? 'bg-blue-600 text-white' 
+                                : 'bg-white border border-gray-200 text-gray-800'
+                            }`}>
+                              <p className="text-sm whitespace-pre-wrap">{chat.message}</p>
+                            </div>
+                          </div>
+                        ))}
+                        {isLoading && (
+                          <div className="flex justify-start">
+                            <div className="bg-white border border-gray-200 text-gray-800 p-3 rounded-lg">
+                              <div className="flex items-center space-x-2">
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                <span className="text-sm">AI Cost Advisor is thinking...</span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="flex space-x-2">
+                    <Textarea
+                      placeholder="Ask about your AI costs, usage patterns, or optimization strategies..."
+                      value={chatMessage}
+                      onChange={(e) => setChatMessage(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      className="flex-1 resize-none border-blue-200 focus:border-blue-400"
+                      rows={3}
+                      disabled={isLoading || !user.email_confirmed_at}
+                    />
+                    <Button 
+                      onClick={handleSendMessage}
+                      className="bg-blue-600 hover:bg-blue-700 px-6"
+                      disabled={!chatMessage.trim() || isLoading || !user.email_confirmed_at}
+                    >
+                      {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Send"}
+                    </Button>
+                  </div>
+                  
+                  {user.email_confirmed_at ? (
+                    <p className="text-sm text-gray-500 text-center">
+                      Example: "I'm using GPT-4 for content generation with 10,000 tokens daily. How can I reduce costs?"
+                    </p>
+                  ) : (
+                    <p className="text-sm text-orange-600 text-center">
+                      Please verify your email to start chatting with the AI Cost Advisor
+                    </p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
+        {/* Quick Actions */}
+        <section className="py-12 px-4">
+          <div className="container mx-auto max-w-6xl">
+            <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">Quick Actions</h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              <Card className="border-blue-200">
+                <CardHeader>
+                  <div className="flex items-center space-x-3">
+                    <div className="bg-blue-100 p-2 rounded-lg">
+                      <BarChart className="h-6 w-6 text-blue-600" />
+                    </div>
+                    <div>
+                      <CardTitle>View Dashboard</CardTitle>
+                      <CardDescription>
+                        Access your complete analytics dashboard
+                      </CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <Button 
+                    asChild 
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                    disabled={!user.email_confirmed_at}
+                  >
+                    <Link to="/dashboard">
+                      Go to Dashboard
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="border-green-200">
+                <CardHeader>
+                  <div className="flex items-center space-x-3">
+                    <div className="bg-green-100 p-2 rounded-lg">
+                      <User className="h-6 w-6 text-green-600" />
+                    </div>
+                    <div>
+                      <CardTitle>Manage Profile</CardTitle>
+                      <CardDescription>
+                        Update your account settings and preferences
+                      </CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <Button asChild className="w-full bg-green-600 hover:bg-green-700">
+                    <Link to="/profile">
+                      Manage Profile
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  // Public (non-authenticated) view - keep existing code
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
       {/* Header */}
@@ -94,7 +334,7 @@ const Index = () => {
             <a href="#faq" className="text-gray-600 hover:text-blue-600 transition-colors">FAQ</a>
           </nav>
           <Button asChild className="bg-blue-600 hover:bg-blue-700">
-            <Link to="/signup">Get Started</Link>
+            <Link to="/auth">Get Started</Link>
           </Button>
         </div>
       </header>
@@ -115,7 +355,7 @@ const Index = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 px-8 py-3">
-              <Link to="/signup">Start Free Analysis</Link>
+              <Link to="/auth">Start Free Analysis</Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="border-blue-200 text-blue-600 hover:bg-blue-50 px-8 py-3">
               <Link to="/demo">View Demo</Link>
