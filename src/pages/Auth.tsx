@@ -32,11 +32,25 @@ const Auth = () => {
     const { error } = await signIn(loginData.email, loginData.password);
     
     if (error) {
-      toast({
-        title: "Login Failed",
-        description: error.message,
-        variant: "destructive"
-      });
+      if (error.message.includes('Email not confirmed')) {
+        toast({
+          title: "Email Not Verified",
+          description: "Please check your email and click the verification link before signing in.",
+          variant: "destructive"
+        });
+      } else if (error.message.includes('Invalid login credentials')) {
+        toast({
+          title: "Invalid Credentials",
+          description: "Please check your email and password and try again.",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Login Failed",
+          description: error.message,
+          variant: "destructive"
+        });
+      }
     } else {
       toast({
         title: "Login Successful",
@@ -57,22 +71,41 @@ const Auth = () => {
       });
       return;
     }
+
+    if (signupData.password.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters long",
+        variant: "destructive"
+      });
+      return;
+    }
     
     setIsLoading(true);
     
     const { error } = await signUp(signupData.email, signupData.password, signupData.name);
     
     if (error) {
-      toast({
-        title: "Signup Failed",
-        description: error.message,
-        variant: "destructive"
-      });
+      if (error.message.includes('User already registered')) {
+        toast({
+          title: "Account Already Exists",
+          description: "An account with this email already exists. Please sign in instead.",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Signup Failed",
+          description: error.message,
+          variant: "destructive"
+        });
+      }
     } else {
       toast({
-        title: "Account Created",
-        description: "Welcome to AI Cost Advisor! Please check your email to verify your account.",
+        title: "Account Created Successfully!",
+        description: "Please check your email and click the verification link to complete your registration.",
       });
+      // Clear the form
+      setSignupData({ name: "", email: "", password: "", confirmPassword: "" });
     }
     setIsLoading(false);
   };
@@ -170,10 +203,11 @@ const Auth = () => {
                     <Input
                       id="signup-password"
                       type="password"
-                      placeholder="Create a password"
+                      placeholder="Create a password (min 6 characters)"
                       value={signupData.password}
                       onChange={(e) => setSignupData({...signupData, password: e.target.value})}
                       required
+                      minLength={6}
                     />
                   </div>
                   

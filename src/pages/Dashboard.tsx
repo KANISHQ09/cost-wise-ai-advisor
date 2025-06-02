@@ -4,37 +4,66 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Zap, User, BarChart, TrendingDown, Calculator, LogOut } from "lucide-react";
+import { Zap, User, BarChart, Calculator, LogOut, Mail } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
-  const { user, signOut } = useAuth();
+  const { user, signOut, loading } = useAuth();
   const [profile, setProfile] = useState<any>(null);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
-    if (!user) {
+    if (!loading && !user) {
       navigate('/auth');
       return;
     }
 
+    if (user && !user.email_confirmed_at) {
+      toast({
+        title: "Email Verification Required",
+        description: "Please check your email and click the verification link to access all features.",
+        variant: "destructive"
+      });
+    }
+
     const fetchProfile = async () => {
-      const { data } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-      setProfile(data);
+      if (user) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+        setProfile(data);
+      }
     };
 
     fetchProfile();
-  }, [user, navigate]);
+  }, [user, navigate, loading, toast]);
 
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
+    toast({
+      title: "Signed Out",
+      description: "You have been successfully signed out.",
+    });
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="bg-blue-600 p-3 rounded-lg mb-4 inline-block">
+            <Zap className="h-8 w-8 text-white animate-pulse" />
+          </div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!user) return null;
 
@@ -49,6 +78,12 @@ const Dashboard = () => {
             <h1 className="text-2xl font-bold text-gray-900">AI Cost Advisor</h1>
           </div>
           <div className="flex items-center space-x-4">
+            {!user.email_confirmed_at && (
+              <Badge variant="outline" className="text-orange-600 border-orange-600">
+                <Mail className="h-3 w-3 mr-1" />
+                Email Unverified
+              </Badge>
+            )}
             <Button asChild variant="outline">
               <Link to="/profile">
                 <User className="h-4 w-4 mr-2" />
@@ -71,6 +106,13 @@ const Dashboard = () => {
           <p className="text-gray-600">
             Ready to optimize your AI costs? Explore our tools below.
           </p>
+          {!user.email_confirmed_at && (
+            <div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+              <p className="text-orange-800">
+                <strong>Email verification required:</strong> Please check your email and click the verification link to access all features.
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
@@ -89,7 +131,11 @@ const Dashboard = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <Button asChild className="w-full bg-blue-600 hover:bg-blue-700">
+              <Button 
+                asChild 
+                className="w-full bg-blue-600 hover:bg-blue-700"
+                disabled={!user.email_confirmed_at}
+              >
                 <Link to="/demo-dashboard">
                   Launch Demo Dashboard
                 </Link>
@@ -112,7 +158,11 @@ const Dashboard = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <Button asChild className="w-full bg-green-600 hover:bg-green-700">
+              <Button 
+                asChild 
+                className="w-full bg-green-600 hover:bg-green-700"
+                disabled={!user.email_confirmed_at}
+              >
                 <Link to="/cost-calculator">
                   Try Cost Calculator
                 </Link>
@@ -145,7 +195,12 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="mt-6 text-center">
-                <Badge variant="outline">Connect your AI services to see real data</Badge>
+                <Badge variant="outline">
+                  {user.email_confirmed_at 
+                    ? "Connect your AI services to see real data" 
+                    : "Verify your email to connect services"
+                  }
+                </Badge>
               </div>
             </CardContent>
           </Card>

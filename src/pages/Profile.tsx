@@ -5,50 +5,55 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Zap, ArrowLeft } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Zap, ArrowLeft, Mail, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
 const Profile = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const [profile, setProfile] = useState({ full_name: "", company: "" });
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
+    if (!loading && !user) {
       navigate('/auth');
       return;
     }
 
     const fetchProfile = async () => {
-      const { data } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-      
-      if (data) {
-        setProfile({
-          full_name: data.full_name || "",
-          company: data.company || ""
-        });
+      if (user) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+        
+        if (data) {
+          setProfile({
+            full_name: data.full_name || "",
+            company: data.company || ""
+          });
+        }
       }
     };
 
     fetchProfile();
-  }, [user, navigate]);
+  }, [user, navigate, loading]);
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) return;
+    
     setIsLoading(true);
 
     const { error } = await supabase
       .from('profiles')
       .upsert({
-        id: user!.id,
+        id: user.id,
         full_name: profile.full_name,
         company: profile.company,
         updated_at: new Date().toISOString()
@@ -68,6 +73,19 @@ const Profile = () => {
     }
     setIsLoading(false);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="bg-blue-600 p-3 rounded-lg mb-4 inline-block">
+            <Zap className="h-8 w-8 text-white animate-pulse" />
+          </div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!user) return null;
 
@@ -99,6 +117,28 @@ const Profile = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            <div className="mb-6">
+              <div className="flex items-center space-x-2 mb-2">
+                <Label>Email Verification Status</Label>
+                {user.email_confirmed_at ? (
+                  <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">
+                    <CheckCircle className="h-3 w-3 mr-1" />
+                    Verified
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="text-orange-600 border-orange-600">
+                    <Mail className="h-3 w-3 mr-1" />
+                    Unverified
+                  </Badge>
+                )}
+              </div>
+              {!user.email_confirmed_at && (
+                <p className="text-sm text-orange-600">
+                  Please check your email and click the verification link to verify your account.
+                </p>
+              )}
+            </div>
+
             <form onSubmit={handleUpdateProfile} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
