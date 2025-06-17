@@ -1,73 +1,83 @@
-# Welcome to your Lovable project
+# 🧠 Cost Wise AI Advisor
 
-## Project info
+A smart AI-powered platform that helps users track and manage their AI tool usage, optimize costs, and explore intelligent recommendations — all in one intuitive dashboard.
 
-**URL**: https://lovable.dev/projects/281a7361-7a83-4020-b642-760b09816272
+## 🔍 Overview
 
-## How can I edit this code?
+**Cost Wise AI Advisor** empowers individuals and teams to:
 
-There are several ways of editing your application.
+* Analyze spending patterns on AI tools.
+* Visualize usage data and savings.
+* Get cost-optimization suggestions through a custom AI agent.
+* Access a simple cost calculator.
+* Use the dashboard without signing up, or unlock full features by registering.
 
-**Use Lovable**
+## ✨ Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/281a7361-7a83-4020-b642-760b09816272) and start prompting.
+* 📊 **Interactive Dashboard**: Real-time charts showing AI tool usage, cost breakdowns, and trends.
+* 🧮 **Cost Calculator**: Easily compute costs based on custom input data.
+* 🤖 **AI Assistant**: Prompt-based advisor for suggestions and reports.
+* 🔐 **Authentication**: Sign-up/sign-in flow for saving user-specific data.
+* 🌐 **Frontend**: Built with modern UI components using React and Tailwind CSS.
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🚀 Tech Stack
 
-**Use your preferred IDE**
+* **Frontend**: React, Tailwind CSS, ShadCN UI
+* **Backend**: Node.js, Express
+* **Database**: MongoDB
+* **AI Integration**: Lyzr Agent (for advisory prompts)
+* **Hosting**: Vercel (Frontend), Render (Backend)
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 📸 Demo Preview
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+![Dashboard](https://github.com/KANISHQ09/cost-wise-ai-advisor/assets/134469703/0e5c3a99-f54e-4290-86cc-d843c21b002b)
 
-Follow these steps:
+Try it live: [Cost Wise AI Advisor (Live)](https://cost-wise-ai.vercel.app/)
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## 📁 Folder Structure
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+```
+cost-wise-ai-advisor/
+│
+├── backend/           # Node.js backend (Express + MongoDB)
+├── frontend/          # React frontend with UI and routing
+│   ├── components/    # Reusable UI components
+│   ├── pages/         # Page routes (Dashboard, Login, etc.)
+│   └── utils/         # Utility functions
+├── .env               # Environment variables
+├── README.md
+└── ...
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
+## 🛠️ Setup Instructions
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/KANISHQ09/cost-wise-ai-advisor.git
+cd cost-wise-ai-advisor
+```
+
+### 2. Set up the backend
+
+```bash
+cd backend
+npm install
+# Add .env file with MongoDB URI and API keys
+npm start
+```
+
+### 3. Set up the frontend
+
+```bash
+cd frontend
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## 🧪 Sample Prompts for AI Advisor
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+> “Suggest ways to reduce OpenAI API costs.”
+> “Summarize my monthly usage and savings.”
+> “Is it worth switching to a different AI provider?”
 
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/281a7361-7a83-4020-b642-760b09816272) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
