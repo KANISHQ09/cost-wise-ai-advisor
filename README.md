@@ -1,4 +1,4 @@
-# 💰 Cost Wise AI Advisor
+# 💰 AI Cost Advisor
 
 A modern AI-powered cost management tool that helps users analyze AI tool spending, optimize expenses, and receive actionable insights — all with a clean and fast UI.
 
