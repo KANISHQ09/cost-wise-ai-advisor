@@ -90,15 +90,6 @@ Ensure the correct environment variables are set on your hosting platform.
 
 ---
 
-## 🚧 Roadmap
-
-* [ ] Billing summary exports (PDF/CSV)
-* [ ] Real-time usage tracking
-* [ ] Cost-saving goal tracker
-* [ ] Dark mode toggle
-
----
-
 ## 📜 License
 
 This project is open-source under the [MIT License](LICENSE).
