@@ -1,83 +1,105 @@
-# 🧠 Cost Wise AI Advisor
+# 💰 Cost Wise AI Advisor
 
-A smart AI-powered platform that helps users track and manage their AI tool usage, optimize costs, and explore intelligent recommendations — all in one intuitive dashboard.
+A modern AI-powered cost management tool that helps users analyze AI tool spending, optimize expenses, and receive actionable insights — all with a clean and fast UI.
 
-## 🔍 Overview
+## 🛠 Tech Stack
 
-**Cost Wise AI Advisor** empowers individuals and teams to:
+* ⚡ **Vite** – Next-gen frontend tooling
+* ⚛️ **React** – Component-based UI
+* 💨 **Tailwind CSS** – Utility-first styling
+* 🧩 **ShadCN/UI** – Accessible UI components
+* 🔐 **Supabase** – Auth and database
+* 📝 **TypeScript** – Type-safe development
 
-* Analyze spending patterns on AI tools.
-* Visualize usage data and savings.
-* Get cost-optimization suggestions through a custom AI agent.
-* Access a simple cost calculator.
-* Use the dashboard without signing up, or unlock full features by registering.
+---
 
-## ✨ Features
+## 🔍 Features
 
-* 📊 **Interactive Dashboard**: Real-time charts showing AI tool usage, cost breakdowns, and trends.
-* 🧮 **Cost Calculator**: Easily compute costs based on custom input data.
-* 🤖 **AI Assistant**: Prompt-based advisor for suggestions and reports.
-* 🔐 **Authentication**: Sign-up/sign-in flow for saving user-specific data.
-* 🌐 **Frontend**: Built with modern UI components using React and Tailwind CSS.
+* 🔐 **User Auth (Supabase)** – Login/signup with session management.
+* 📈 **Dashboard** – Cost tracking and usage visualization.
+* 🤖 **AI Cost Advisor** – Prompt-based suggestions via integrated AI agent.
+* 📊 **Cost Calculator** – Simulate and plan your AI tool usage.
+* ⚙️ **Vite + TypeScript** – Fast builds and DX-friendly environment.
 
-## 🚀 Tech Stack
+---
 
-* **Frontend**: React, Tailwind CSS, ShadCN UI
-* **Backend**: Node.js, Express
-* **Database**: MongoDB
-* **AI Integration**: Lyzr Agent (for advisory prompts)
-* **Hosting**: Vercel (Frontend), Render (Backend)
+## 🧪 Local Development
 
-## 📸 Demo Preview
-
-![Dashboard](https://github.com/KANISHQ09/cost-wise-ai-advisor/assets/134469703/0e5c3a99-f54e-4290-86cc-d843c21b002b)
-
-Try it live: [Cost Wise AI Advisor (Live)](https://cost-wise-ai.vercel.app/)
-
-## 📁 Folder Structure
-
-```
-cost-wise-ai-advisor/
-│
-├── backend/           # Node.js backend (Express + MongoDB)
-├── frontend/          # React frontend with UI and routing
-│   ├── components/    # Reusable UI components
-│   ├── pages/         # Page routes (Dashboard, Login, etc.)
-│   └── utils/         # Utility functions
-├── .env               # Environment variables
-├── README.md
-└── ...
-```
-
-## 🛠️ Setup Instructions
-
-### 1. Clone the repository
+### 1. Clone the repo
 
 ```bash
 git clone https://github.com/KANISHQ09/cost-wise-ai-advisor.git
 cd cost-wise-ai-advisor
 ```
 
-### 2. Set up the backend
+### 2. Install dependencies
 
 ```bash
-cd backend
-npm install
-# Add .env file with MongoDB URI and API keys
-npm start
+bun install
 ```
 
-### 3. Set up the frontend
+> If you don't have Bun: [https://bun.sh/docs/installation](https://bun.sh/docs/installation)
+> Alternatively, use `npm install` if you prefer Node.
+
+### 3. Add your Supabase environment variables
+
+Create a `.env` file in the root:
+
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_anon_key
+```
+
+### 4. Start dev server
 
 ```bash
-cd frontend
-npm install
+bun run dev
+# or
 npm run dev
 ```
 
-## 🧪 Sample Prompts for AI Advisor
+---
 
-> “Suggest ways to reduce OpenAI API costs.”
-> “Summarize my monthly usage and savings.”
-> “Is it worth switching to a different AI provider?”
+## 📁 Folder Structure
+
+```
+.
+├── public/              # Static files
+├── src/
+│   ├── components/      # UI Components (ShadCN)
+│   ├── lib/             # Supabase client config
+│   ├── pages/           # Main routes and views
+│   ├── hooks/           # Custom React hooks
+│   └── utils/           # Utility functions
+├── supabase/            # Supabase schema and config
+├── tailwind.config.ts   # Tailwind setup
+├── vite.config.ts       # Vite config
+└── tsconfig.json        # TypeScript config
+```
+
+---
+
+## 📦 Deployment
+
+The project can be easily deployed using:
+
+* **Frontend**: Vercel, Netlify, Cloudflare Pages
+* **Backend/Auth**: Supabase (hosted)
+
+Ensure the correct environment variables are set on your hosting platform.
+
+---
+
+## 🚧 Roadmap
+
+* [ ] Billing summary exports (PDF/CSV)
+* [ ] Real-time usage tracking
+* [ ] Cost-saving goal tracker
+* [ ] Dark mode toggle
+
+---
+
+## 📜 License
+
+This project is open-source under the [MIT License](LICENSE).
 
