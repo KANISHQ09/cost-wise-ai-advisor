@@ -2,6 +2,10 @@
 
 A modern AI-powered cost management tool that helps users analyze AI tool spending, optimize expenses, and receive actionable insights — all with a clean and fast UI.
 
+# Live-Demo
+
+https://cost-wise-ai-advisor-ncsagu8qu-kanishqs-projects-280b26ab.vercel.app/
+
 ## 🛠 Tech Stack
 
 * ⚡ **Vite** – Next-gen frontend tooling
